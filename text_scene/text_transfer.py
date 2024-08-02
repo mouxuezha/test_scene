@@ -18,7 +18,8 @@ class text_transfer:
         # 这个把读出来的JSON文件转换成一段叙述。
         unit_all = status_json["UnitState"]
         unit_all_list = list(unit_all.keys())
-        result_text = ""
+        result_text_red = "红方："
+        result_text_blue = "蓝方："
         for unit_type in self.type_list:
             count_red = 0 
             count_blue = 0 
@@ -28,11 +29,12 @@ class text_transfer:
                         count_red += 1
                     else:
                         count_blue += 1
-                #然后生成一段话
-                if count_red != 0:
-                    result_text += "红方" + self.type_list_CN[self.type_list.index(unit_type)] + "有" + str(count_red) + "个。\n"
-                if count_blue != 0:
-                    result_text += "蓝方" + self.type_list_CN[self.type_list.index(unit_type)] + "有" + str(count_blue) + "个。\n"
+            #然后生成一段话
+            if count_red != 0:
+                result_text_red += self.type_list_CN[self.type_list.index(unit_type)] + "有" + str(count_red) + "个。"
+            if count_blue != 0:
+                result_text_blue += self.type_list_CN[self.type_list.index(unit_type)] + "有" + str(count_blue) + "个。"
+            result_text = result_text_red + result_text_blue
         return result_text
             
         pass 
