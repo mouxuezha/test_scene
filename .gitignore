@@ -1,4 +1,5 @@
 .vscode
+auto_test
 model_communication/AK.txt
 model_communication/SK.txt
 model_communication/ZK.txt

@@ -7,12 +7,15 @@ class text_transfer:
     def __init__(self):
         # 之前专门写个type transfer好像没啥用，直接两个列表对一下index拉倒了。
         self.__init_type()
+        self.num_commands = [0,0] # 第一个是转化成功的commands，第二个是转化失败的commands 
+
 
     def __init_type(self):
         # 这个就是把那些ID的类型弄过来整成一个列表以备后用。
         # 红方坦克：MainBattleTank_ZTZ100，蓝方坦克：MainBattleTank_ZTZ200，红方步兵战车：WheeledCmobatTruck_ZB100，蓝方步兵战车：WheeledCmobatTruck_ZB200，步兵班：infantry，自行迫榴炮：Howitzer_C100，无人突击车：ArmoredTruck_ZTL100，无人机：ShipboardCombat_plane，导弹发射车：missile_truck。
         self.type_list = ["MainBattleTank_ZTZ100","MainBattleTank_ZTZ200","WheeledCmobatTruck_ZB100","WheeledCmobatTruck_ZB200","infantry","Howitzer_C100","ArmoredTruck_ZTL100","ShipboardCombat_plane","missile_truck"]
         self.type_list_CN = ["坦克","坦克","步兵战车","步兵战车","步兵班","自行迫榴炮","无人突击车","无人机","导弹发射车"]
+        self.command_type_list = ["add","delete"]
     
     def status_to_text(self,status_json):
         # 这个把读出来的JSON文件转换成一段叙述。
@@ -37,7 +40,57 @@ class text_transfer:
             result_text = result_text_red + result_text_blue
         return result_text
             
-        pass 
+    def text_to_commands(self, text:str):
+        # 这个是从一段话里面把命令提取出来
+        commands = []
+        for command_type in self.command_type_list:
+            if command_type == "add":
+                index_list = self.find_all_str(text, command_type) 
+                for i in range(len(index_list)):
+                    sub_str = text[index_list[i]:-1]
+                    try:
+                        unit_type = self.cut_from_str(sub_str, "unit_type=", ",")
+                        team_id = self.cut_from_str(sub_str, "team_id=", "]")
+                        command_single = {"type": command_type, "unit_type": unit_type, "team_id": team_id}
+                        commands.append(command_single)
+                        self.num_commands[0] += 1
+                    except:
+                        self.num_commands[1] += 1
+                        print("G in one add command")
+            if command_type == "delete":
+                index_list = self.find_all_str(text, command_type)
+                for i in range(len(index_list)):
+                    sub_str = text[index_list[i]:-1]
+                    try:
+                        unit_type = self.cut_from_str(sub_str, "unit_type=", ",")
+                        team_id = self.cut_from_str(sub_str, "team_id=", "]")
+                        command_single = {"type": command_type, "unit_type": unit_type, "team_id": team_id}
+                        commands.append(command_single)
+                        self.num_commands[0] += 1
+                    except:
+                        self.num_commands[1] += 1
+                        print("G in one delete command")
+
+
+    def find_all_str(self, text:str, sub_str:str):
+        index_list = [] 
+        index = text.find(sub_str)
+        while index != -1:
+            index_list.append(index)
+            index = text.find(sub_str, index + 1)
+        
+        return index_list
+    
+    def cut_from_str(self, text:str, str_qian:str, str_hou:str):
+        # 需要把数字从字符串中抠出来.不是数字也不影响
+        # 先找到数字的起始位置.
+        index_qian = text.find(str_qian)
+        sub_str = text[index_qian+len(str_qian):]
+        index_hou = sub_str.find(str_hou)
+        # index_hou = text.find(str_hou)
+        number_str = sub_str[0:index_hou]
+        # number_float = float(number_str)
+        return number_str    
 if __name__ == '__main__':
     from json_editor.json_editor import json_editor
     shishi_json = json_editor()
