@@ -12,8 +12,8 @@ class text_transfer:
 
     def __init_type(self):
         # 这个就是把那些ID的类型弄过来整成一个列表以备后用。
-        # 红方坦克：MainBattleTank_ZTZ100，蓝方坦克：MainBattleTank_ZTZ200，红方步兵战车：WheeledCmobatTruck_ZB100，蓝方步兵战车：WheeledCmobatTruck_ZB200，步兵班：infantry，自行迫榴炮：Howitzer_C100，无人突击车：ArmoredTruck_ZTL100，无人机：ShipboardCombat_plane，导弹发射车：missile_truck。
-        self.type_list = ["MainBattleTank_ZTZ100","MainBattleTank_ZTZ200","WheeledCmobatTruck_ZB100","WheeledCmobatTruck_ZB200","infantry","Howitzer_C100","ArmoredTruck_ZTL100","ShipboardCombat_plane","missile_truck"]
+        # 红方坦克：MainBattleTank_ZTZ100，蓝方坦克：MainBattleTank_ZTZ200，红方步兵战车：WheeledCmobatTruck_ZB100，蓝方步兵战车：WheeledCmobatTruck_ZB200，步兵班：Infantry，自行迫榴炮：Howitzer_C100，无人突击车：ArmoredTruck_ZTL100，无人机：ShipboardCombat_plane，导弹发射车：missile_truck。
+        self.type_list = ["MainBattleTank_ZTZ100","MainBattleTank_ZTZ200","WheeledCmobatTruck_ZB100","WheeledCmobatTruck_ZB200","Infantry","Howitzer_C100","ArmoredTruck_ZTL100","ShipboardCombat_plane","missile_truck"]
         self.type_list_CN = ["坦克","坦克","步兵战车","步兵战车","步兵班","自行迫榴炮","无人突击车","无人机","导弹发射车"]
         self.command_type_list = ["add","delete"]
     
@@ -70,6 +70,7 @@ class text_transfer:
                     except:
                         self.num_commands[1] += 1
                         print("G in one delete command")
+        return commands
 
 
     def find_all_str(self, text:str, sub_str:str):
@@ -92,10 +93,18 @@ class text_transfer:
         # number_float = float(number_str)
         return number_str    
 if __name__ == '__main__':
-    from json_editor.json_editor import json_editor
-    shishi_json = json_editor()
-    shishi_json.set_location(r"C:\Users\42418\Desktop\2024ldjs\EnglishMulu\test_scene\auto_test\new1.Json")
-    shishi_json.load_json()
-    shishi = text_transfer()
-    jieguo = shishi.status_to_text(shishi_json.json_data)
+    flag = 1
+    if flag == 0:
+        from json_editor.json_editor import json_editor
+        shishi_json = json_editor()
+        shishi_json.set_location(r"C:\Users\42418\Desktop\2024ldjs\EnglishMulu\test_scene\auto_test\new1.Json")
+        shishi_json.load_json()
+        shishi = text_transfer()
+        jieguo = shishi.status_to_text(shishi_json.json_data)
+    elif flag == 1:
+        response_str = '好的，已将按照您的要求更新了场景。以下是更新后的场景编辑指令：\n\n[add, unit_type=MainBattleTank_ZTZ200, team_id=1],\n[add, unit_type=WheeledCmobatTruck_ZB100, team_id=0],\n[add, unit_type=infantry, team_id=0],\n[delete, unit_type=WheeledCmobatTruck_ZB200, team_id=0],\n[delete, unit_type=missile_truck, team_id=0],\n\n请注意，我已经将蓝方自行迫榴炮和导弹发射车从场景中删除了，并增加了红方的一个步兵战车和一个坦克。\n\n如果您还有其他需求，请随时告诉我。'
+        shishi = text_transfer()
+        jieguo = shishi.text_to_commands(response_str)
+        print(jieguo)
+    
 

@@ -17,7 +17,7 @@ current_path = os.path.dirname(__file__)
 root_path = os.path.abspath(os.path.dirname(current_path) + os.path.sep + ".")
 print(root_path)
 sys.path.append(root_path)
-from text_transfer.prompts import PROMPT_TEMPLATES
+from text_scene.prompts import PROMPT_TEMPLATES
 
 
 CHAT_MODELS = {

@@ -18,9 +18,14 @@ class json_editor():
         # 这个是外部设定需要编辑的东西的路径 
         self.json_location = location
         
-    def load_json(self):
+    def load_json(self,**kargs):
         # 这个是加载json文件
-        with open(self.json_location, 'r', encoding='utf-8') as wenjian:
+        if "location" in kargs:
+            location = kargs["location"]
+        else:
+            location = self.json_location
+
+        with open(location, 'r', encoding='utf-8') as wenjian:
             self.json_data = json.load(wenjian)
         self.json_data_original = self.json_data.copy()
         return self.json_data
@@ -61,11 +66,10 @@ class json_editor():
 
     def set_commands_single(self,comand_single):
         # 这个是真的要开始解析命令了。
-        obj_id = comand_single["obj_id"]
         if comand_single["type"] == "add":
-            pass          
+            self.command_add(comand_single["unit_type"],comand_single["team_id"])          
         elif comand_single["type"] == "delete":
-            pass 
+            self.command_delete(comand_single["unit_type"],comand_single["team_id"])           
         else:
             raise Exception("undefined comand type in set_commands_single, G.")
     
@@ -76,9 +80,10 @@ class json_editor():
         unit_reserve = None
         for unit_ID in self.json_data["UnitState"]:
             unit = self.json_data["UnitState"][unit_ID]
+            if unit ==None:
+                continue
             if unit["UnitType"] == unit_type and self.check_team(unit,team_ID):
                 same_num += 1
-            if same_num ==1:
                 # 直接存一个，后面就照着这个来了。
                 unit_reserve = unit
         
@@ -93,6 +98,8 @@ class json_editor():
         unit_ID_delete = None
         for unit_ID in self.json_data["UnitState"]:
             unit = self.json_data["UnitState"][unit_ID]
+            if unit ==None:
+                continue
             if unit["UnitType"] == unit_type and self.check_team(unit,team_ID):
                 same_num += 1
                 unit_ID_delete = unit_ID # 一直刷，刷到符合要求的最后一个
